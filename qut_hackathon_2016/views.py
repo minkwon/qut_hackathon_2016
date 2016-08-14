@@ -1,7 +1,8 @@
 from django.http import HttpResponse
 import datetime
 from django.shortcuts import render
-
+import models
+import json
 
 def hello(request):
     now = datetime.datetime.now()
@@ -12,4 +13,5 @@ def timeline(request, args):
     return render(request, 'index.html', {})
 
 def home(request, args):
-    return HttpResponse("DEFAULT")
+    data = models.get_tags_total_count_list()
+    return render(request, 'index.html', {"data" : data})

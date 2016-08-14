@@ -25,6 +25,5 @@ urlpatterns = [
 
     url(r'^admin/', admin.site.urls),
     url(r'^timeline/(.*)', views.timeline, name='index'),
-    url(r'^hello/$', views.hello),
     url('(^$)', views.home, name='home')
 ]

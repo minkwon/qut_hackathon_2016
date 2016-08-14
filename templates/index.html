@@ -6,10 +6,33 @@
     <meta charset="UTF-8">
     <title>QUT hackathon 2016 project</title>
     <script type="text/javascript" src={% static "qut_hackathon_2016/d3.js" %}></script>
+    <style>
+        .chart div {
+          font: 20px sans-serif;
+          background-color: steelblue;
+          text-align: left;
+          padding: 10px;
+          margin: 1px;
+          color: white;
+        }
+    </style>
 </head>
 <body>
+<h1>What's popular?</h1>
+
+<div class="chart" width="1000"></div>
+
 <script type="text/javascript">
-    d3.select("body").append("p").text("d3 is working")
+    var data = {{ data|safe }};
+    d3.select(".chart")
+        .selectAll("div")
+            .data(data)
+            .enter()
+            .append("div")
+            .style("width", function(d) { return d[1]/1143865 * 100 + "%"; })
+            .text(function(d) { return d[0] + " " + d[1] + ", "
+                    + (Math.round(d[1]/12229758 * 10000) / 100)
+                    + "% of all questions"; });
 
 </script>
 </body>
