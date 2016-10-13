@@ -24,6 +24,6 @@ urlpatterns = [
     # url(r'^blog/', include('blog.urls')),
 
     url(r'^admin/', admin.site.urls),
-    url(r'^timeline/(.*)', views.timeline, name='index'),
-    url('(^$)', views.home, name='home')
+    url(r'^timeline/$', views.timeline, name='timeline'),
+    url(r'(^$)', views.home, name='home')
 ]

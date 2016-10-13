@@ -5,30 +5,12 @@ import os
 import math
 import xml.etree.cElementTree as ET
 import cPickle as pickle
-
-"""
-Returns a dictionary that maps doc ID with its document length.
-Document length is the magnitude of weighted term frequency vector
-generate_doc_length_table(dict<str:[int, ...]>) -> dict<int:>
-"""
-def generate_doc_length_table(hash_index):
-    doc_length_table = {}
-    for term, postings_list in hash_index.iteritems():
-        for doc_id, weighted_term_frequency in postings_list:
-            if doc_id in doc_length_table:
-                doc_length_table[doc_id] += pow(weighted_term_frequency, 2)
-            else:
-                doc_length_table[doc_id] = pow(weighted_term_frequency, 2)
-
-    for doc_id, length in doc_length_table.iteritems():
-        doc_length_table[doc_id] = pow(length, 1/2)
-
-    return doc_length_table
+import time
 
 
-
-
-def index():
+if __name__ == "__main__":
+    
+    startTime = time.time()
     tag_dict = {}
 
     context = ET.iterparse("/Volumes/exFat/QUT_hack/Posts.xml", events=("start", "end"))
@@ -39,9 +21,11 @@ def index():
             raw_tags = elem.attrib.get("Tags")
             year_month = elem.attrib.get("CreationDate")[:7]
             if raw_tags != None:
+                # tags looks like "<linux><ubuntu><bash>"
                 tags = raw_tags[1:(len(raw_tags) - 1)].split("><")
                 for tag in tags:
                     if tag not in tag_dict:
+                        # init counts dictionary
                         tag_dict[tag] = {"total" : 1, year_month : 1}
                     else:
                         tag_dict[tag]["total"] += 1
@@ -70,8 +54,9 @@ def index():
         tag_dict[tag]["earliest_record"] = earliest_record
 
     tag_dict_position_table = {}
-    postings_writer = open("/Volumes/exFat/QUT_hack/indexed_list/tag_dict_posting", "wb")
+    postings_writer = open("static/tag_dict_posting", "wb")
     for tag, counts in tag_dict.iteritems():
+        # only save tags that have more than 1000 total counts
         if counts["total"] > 1000:
             # current position of the file pointer
             pointer = postings_writer.tell()
@@ -79,9 +64,11 @@ def index():
             # each entry of dictionary: { term : (doc frequency, pointer to postings_list) }
             tag_dict_position_table[tag] = pointer
 
-    position_table_writer = open("/Volumes/exFat/QUT_hack/indexed_list/tag_dict_position_table", "wb")
+    position_table_writer = open(" static/tag_dict_position_table", "wb")
     pickle.dump(tag_dict_position_table, position_table_writer)
     postings_writer.close()
     position_table_writer.close()
 
-index()
+    endTime = time.time()
+
+    print "Time taken: " + (endTime - startTime) "seconds"

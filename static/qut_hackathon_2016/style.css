@@ -1,0 +1,38 @@
+body {
+  font: 15px sans-serif;
+  margin: 0;
+}
+
+nav {
+  background-color: #333;
+  margin: 0;
+  overflow: hidden;
+}
+
+.container {
+  padding: 10px;
+}
+
+nav ul {
+  margin: 0;
+  padding: 0;
+}
+
+nav ul li {
+  display: inline-block;
+  list-style-type: none;
+}
+
+/* style for the first level items */
+nav > ul > li > a {
+  color: #aaa;
+  display: block;
+  line-height: 2em;
+  padding: 0.5em 0.5em;
+  text-decoration: none;
+}
+
+/* Change the nav color when mouse hovers */
+nav li:hover {
+  background-color: #666;
+}
