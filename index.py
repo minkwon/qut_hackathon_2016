@@ -5,12 +5,12 @@ import os
 import math
 import xml.etree.cElementTree as ET
 import cPickle as pickle
-import time
+import period
 
 
 if __name__ == "__main__":
     
-    startTime = time.time()
+    startTime = period.time()
     tag_dict = {}
 
     context = ET.iterparse("/Volumes/exFat/QUT_hack/Posts.xml", events=("start", "end"))
@@ -42,15 +42,15 @@ if __name__ == "__main__":
         if counts["total"] > 1000:
             print tag + " : " + str(counts["total"])
         earliest_record = ""
-        for time, count in counts.iteritems():
-            if time != "total":
+        for period, count in counts.iteritems():
+            if period != "total":
                 if earliest_record == "":
-                    earliest_record = time
+                    earliest_record = period
                 else:
                     e_y, e_m = earliest_record.split("-")
-                    t_y, t_m = time.split("-")
+                    t_y, t_m = period.split("-")
                     if int(t_y) <= int(e_y) and int(t_m) < int(e_m):
-                        earliest_record = time
+                        earliest_record = period
         tag_dict[tag]["earliest_record"] = earliest_record
 
     tag_dict_position_table = {}
@@ -61,14 +61,13 @@ if __name__ == "__main__":
             # current position of the file pointer
             pointer = postings_writer.tell()
             pickle.dump(counts, postings_writer)
-            # each entry of dictionary: { term : (doc frequency, pointer to postings_list) }
             tag_dict_position_table[tag] = pointer
 
-    position_table_writer = open(" static/tag_dict_position_table", "wb")
+    position_table_writer = open("static/tag_dict_position_table", "wb")
     pickle.dump(tag_dict_position_table, position_table_writer)
     postings_writer.close()
     position_table_writer.close()
 
-    endTime = time.time()
+    endTime = period.time()
 
-    print "Time taken: " + (endTime - startTime) "seconds"
+    print "Time taken: " + (endTime - startTime) + "seconds"

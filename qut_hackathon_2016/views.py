@@ -3,6 +3,7 @@ import datetime
 from django.shortcuts import render
 import models
 import json
+from django.http import JsonResponse
 
 # def hello(request):
 #     now = datetime.datetime.now()
@@ -14,6 +15,9 @@ def home(request, args):
     return render(request, 'index.html', {'data' : data})
 
 def timeline(request):
-    tag_names = "javascript,java,c#,php,python,c++,objective-c,swift,c,ruby-on-rails,bash,scala,r"
-    data = models.get_timeline_data(tag_names)
     return render(request, 'timeline.html')
+
+def timeline_json(request):
+    query = request.GET.get('query')
+    result = models.get_tag_timeline_in_json(query)
+    return JsonResponse(result, safe=False)

@@ -25,5 +25,6 @@ urlpatterns = [
 
     url(r'^admin/', admin.site.urls),
     url(r'^timeline/$', views.timeline, name='timeline'),
+    url(r'^timeline.json$', views.timeline_json),
     url(r'(^$)', views.home, name='home')
 ]
