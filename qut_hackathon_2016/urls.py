@@ -22,9 +22,11 @@ urlpatterns = [
     # Examples:
     # url(r'^$', 'qut_hackathon_2016.views.home', name='home'),
     # url(r'^blog/', include('blog.urls')),
+    # if url(r'(^$)') bracket used, views.method takes request and argument
 
     url(r'^admin/', admin.site.urls),
     url(r'^timeline/$', views.timeline, name='timeline'),
     url(r'^timeline.json$', views.timeline_json),
-    url(r'(^$)', views.home, name='home')
+    url(r'^home.json$', views.home_json),
+    url(r'^$', views.home, name='home')
 ]

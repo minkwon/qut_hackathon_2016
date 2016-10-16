@@ -132,12 +132,6 @@ function refreshChart(data) {
 
 }
 
-
-
-
-
-
-
 // Ajax call when enter key is pressed
 $(document).ready(function(){
     var search = $('#search');

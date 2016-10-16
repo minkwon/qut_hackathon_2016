@@ -9,13 +9,7 @@ def load_tag_count(tag_name, dictionary, postings_reader):
     postings_reader.seek(dictionary[tag_name])
     return pickle.load(postings_reader)
 
-def get_tags_total_count_list():
-    reader = open("/Volumes/exFat/QUT_hack/indexed_list/tag_sorted_list")
-    data = json.dumps(pickle.load(reader))
-    reader.close()
-    return data
-
-def get_tag_timeline_in_json(tag_string):
+def get_timeline_json(tag_string):
     data = {}
     table_reader = open("static/tag_dict_position_table", "rb")
     pos_table = pickle.load(table_reader)
@@ -67,3 +61,17 @@ def get_tag_timeline_in_json(tag_string):
     return json.dumps(result_list)
 
 
+def get_home_json(query):
+    data = {}
+    table_reader = open("static/tag_dict_position_table", "rb")
+    pos_table = pickle.load(table_reader)
+    table_reader.close()
+    postings_reader = open("static/tag_dict_posting", "rb")
+    # grab only the postings for user query and store in data
+    for tag_name in tags:
+        postings = load_tag_count(tag_name, pos_table, postings_reader)
+        data[tag_name] = postings
+    postings_reader.close()
+
+    result_list = []
+    return None

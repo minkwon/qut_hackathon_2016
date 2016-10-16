@@ -64,7 +64,7 @@ input[type=text]:focus {
   width: 40px;
   height: 40px;
   position: fixed;
-  top: 50%;
+  top: 30%;
   left: 50%;
 }
 
