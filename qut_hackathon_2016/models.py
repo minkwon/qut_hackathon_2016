@@ -46,10 +46,7 @@ def get_timeline_json(tag_string):
                 #TODO: handle this properly
                 # if tag wasn't found in the dictionary
                 if data[tag] == None:
-                    return json.dumps(["garbage"])
-
-
-
+                    return json.dumps([])
                 elif date in data[tag]:
                     entry[tag] = data[tag][date]
                 else:
@@ -62,16 +59,21 @@ def get_timeline_json(tag_string):
 
 
 def get_home_json(query):
-    data = {}
     table_reader = open("static/tag_dict_position_table", "rb")
     pos_table = pickle.load(table_reader)
     table_reader.close()
     postings_reader = open("static/tag_dict_posting", "rb")
-    # grab only the postings for user query and store in data
-    for tag_name in tags:
-        postings = load_tag_count(tag_name, pos_table, postings_reader)
-        data[tag_name] = postings
-    postings_reader.close()
+
 
     result_list = []
-    return None
+    if query == 'totalCount':
+        # grab all the postings
+        for tag_name, position in pos_table.iteritems():
+            entry = {}
+            postings = load_tag_count(tag_name, pos_table, postings_reader)
+            entry["tagName"] = tag_name
+            entry["totalCount"] = postings["total"]
+            result_list.append(entry)
+        postings_reader.close()
+
+    return json.dumps(result_list)

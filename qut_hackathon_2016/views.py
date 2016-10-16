@@ -1,8 +1,6 @@
 from django.http import HttpResponse
-import datetime
 from django.shortcuts import render
 import models
-import json
 from django.http import JsonResponse
 
 # def hello(request):
