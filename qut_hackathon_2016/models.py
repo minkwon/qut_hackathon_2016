@@ -76,4 +76,5 @@ def get_home_json(query):
             result_list.append(entry)
         postings_reader.close()
 
+    result_list.sort(key=lambda entry: entry["totalCount"], reverse=False)
     return json.dumps(result_list)
