@@ -1,0 +1,35 @@
+Posts.xml
+	
+	How helpful StackOverflow will be for the given topic:
+
+	Approximate time User Post in a category (tag) to expect an answer
+		- time of earliest answer (maybe only ones with no negative scores)
+		- time of earliest accepted answer
+
+	Count of for a correct answer or an accepted solution.
+
+		Could also compare unanswered question, no accepted answer, low or negative scored question.
+
+		Should not talk about highly scored as it indicates popularity but it does not indicate how valuable the information is. Say a question with only 10 upvotes could be very valuable for a specific user.
+
+	Users.xml
+	Number of high reputation users in a category
+
+	Maybe distribute in a map, for Brisbane city compared with other cities
+
+	Users.xml, Votes.xml
+	Number of users carrying a lot of votes titled as favourite
+
+
+Not going to consider:
+
+	How hot the topic is:
+	Number of answers and comments on a question. Number of comments that have a count greater than average count
+		This indicates how active the discussion is.
+
+	This does not directly influence a developer to choose a stack. Just because it is popular in StackOverflow, it doesn't necessarily mean that you would get most help from StackOverflow. It is not always the case that most popular technology stack is the best solution.
+
+	Mean of Upvotes.
+		Show the standard deviation on scores.
+		Try to say that there are so many low scored questions and only very few very higly scored question. And the mean would mean meaningless.
+
