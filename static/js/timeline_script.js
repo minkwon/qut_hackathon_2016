@@ -5,7 +5,7 @@ var document = $('document'),
 // size, margin of line chart
 var margin = {top: 20, right: 20, bottom: 30, left: 50},
     width = 960 - margin.left - margin.right,
-    height = 500 - margin.top - margin.bottom;
+    height = 650 - margin.top - margin.bottom;
 
 var svg = d3.select("#chart").append("svg")
     .attr("width", width + margin.left + margin.right)
@@ -31,10 +31,9 @@ var trendLineColor = d3.scaleOrdinal(d3.schemeDark2).domain(d3.range(0, 8));
 
 // Tool tip initialised
 var toolTip = d3.select('body').append('div')
-    .classed("tooltip", true)
+    .attr("class", "d3-tip")
+    .attr("id", "timeline-tooltip")
     .style('position', 'absolute')
-    .style('padding', '0 10px')
-    .style('background', 'white')
     .style('opacity', 0);
 
 // vertical guide
@@ -53,6 +52,7 @@ function refreshChart(data) {
     var dates = [];
     var maxValue = 0;
     var parseTime = d3.timeParse("%Y-%m");
+    var formatTime = d3.timeFormat("%B %Y");
 
     // format the dates and save in dates, also find max value amongst all data
     for (var i = 0; i < data.length; i++){
@@ -93,6 +93,7 @@ function refreshChart(data) {
             lines.append('path')
                 .data([data])
                 .attr("class", "line")
+                .attr("id", key)
                 .style("stroke", trendLineColor(i))
                 .attr("d", line);
         }
@@ -107,18 +108,44 @@ function refreshChart(data) {
 
     chartDrawn = true;
 
-    // initialise tooltip
+    // bisector to determine the date
+    var bisectDate = d3.bisector(function(d) { return parseTime(d.date); }).right;
+
+    // mouse event on the line chart
     d3.select('svg')
         .on("mousemove", function() {
-            toolTip.style('opacity', 0.9)
-            .html("hello fucking world");
+            var mouseX = Math.min(d3.event.pageX - margin.left - 10, 880);
+            var mouseDate = xScale.invert(mouseX);
+            var mouseDataIndex = bisectDate(data, mouseDate);
+            var html = "";
+
             toolTip.style('left', (d3.event.pageX + 30) + 'px')
-                .style('top', (d3.event.pageY + 30) + 'px');
+                .style('top', (d3.event.pageY - 50) + 'px');
+
+            toolTip.style('opacity', 0.9)
+                .html("Date: ")
+                .append("span")
+                .html(formatTime(mouseDate) + "<br><br>");
+
+            // tool tip info with legend
+            i = 0;
+            for (key in entry) {
+                if (key != "date"){
+                    var value = data[mouseDataIndex][key];
+                    var currentSpan = toolTip.append("div");
+                    currentSpan
+                        //.attr("class", "legend-circle")
+                        .style("background", trendLineColor(i))
+                        .style("padding", "2px")
+                    currentSpan.html(key + ": " + value);
+                }
+                i++;
+            }
 
             verticalGuide
                 .style('stroke', 'orange')
                 .style('opacity', 1)
-                .attr("d", "M" + (d3.event.pageX - margin.left) + " 0 V " + height)
+                .attr("d", "M" + (d3.event.pageX - margin.left - 10) + " 0 V " + height)
         })
         .on("mouseleave", function() {
             toolTip.style('opacity', 0);

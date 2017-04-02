@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<posts>
+    <row Id="1" PostTypeId="1" Tags="&lt;linux&gt;&lt;bash&gt;"/>
+    <row Id="2" PostTypeId="2" Tags="&lt;java&gt;"/>
+    <row Id="3" PostTypeId="1" ParentId="123"/>
+</posts>

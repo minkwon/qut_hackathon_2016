@@ -38,6 +38,7 @@ var subTitle = infoBox.append("text")
     .html("Showing " + currentTotalTagCount + " of them which are used at least 1000 times");
 
 var tooltip = d3.tip().attr("class", "d3-tip")
+    .attr("id", "home-tooltip")
     .offset([-10, 0])
     .html(function(d, i) {
         return "<strong>Tag name:</strong> <span style='color:white'>" + d.tagName + "</span><br>"
@@ -56,7 +57,6 @@ function simulateTagOverview(data) {
         .domain([1000, (maxCount - 1000) / 2 + 1000, maxCount])
         .range(["white", "orange", "red"]);
 
-    var stop = false;
     simulation = d3.forceSimulation(data)
         // positive attracts negative repels each other
         //.force("charge", d3.forceManyBody(-10).distanceMax(50))
@@ -106,10 +106,10 @@ function stopSimulation() {
     nodes.transition()
             .attr('cx', function(d) { return d.x + 300; })
             .attr('cy', function(d) { return d.y; });
-    showToolTips()
+    showText()
 }
 
-function showToolTips() {
+function showText() {
     title.transition()
         .style("opacity", 1)
         .duration(400);

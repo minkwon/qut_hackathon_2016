@@ -33,3 +33,46 @@ Not going to consider:
 		Show the standard deviation on scores.
 		Try to say that there are so many low scored questions and only very few very higly scored question. And the mean would mean meaningless.
 
+    Average over entire period of time
+        User is interested in what's happening now and maybe few months back, for their need in present time.
+
+
+How about forcing a comparison? Don't show just one, but always make them to compare between two
+
+ - Difference in accepted answer/question percentage
+
+Question:
+Id,
+~AcceptedAnswerId,
+OwnerUserId,
+~OwnerDisplayName,
+CreationDate,
+Body,
+~LastEditUserId,
+~LastEditDate,
+~<LastEditorDisplayName>
+~CommunityOwnedDate
+~ClosedDate
+~<Some Other Date>
+LastActivityDate,
+Title,
+~Tags,
+AnswerCount,
+Score,
+ViewCount,
+CommentCount,
+FavouriteCount
+
+Answer:
+Id,
+ParentId,
+OwnerUserId,
+~OwnerDisplayName,
+CreationDate,
+Body,
+~LastEditUserId,
+~LastEditDate,
+~<LastEditorDisplayName>
+LastActivityDate,
+Score,
+CommentCount

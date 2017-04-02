@@ -22,4 +22,5 @@ def timeline(request):
 def timeline_json(request):
     query = request.GET.get('query')
     result = models.get_timeline_json(query)
+    print result
     return JsonResponse(result, safe=False)

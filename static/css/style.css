@@ -113,8 +113,8 @@ input[type=text]:focus {
   }
 }
 
-/* Tool tip */
-.d3-tip {
+/* Home Tool tip */
+#home-tooltip {
   line-height: 1;
   padding: 12px;
   background: rgba(0, 0, 0, 0.8);
@@ -122,8 +122,18 @@ input[type=text]:focus {
   border-radius: 2px;
 }
 
+/* Timeline Tool tip */
+#timeline-tooltip {
+  line-height: 1;
+  padding: 10px 10px 10px 10px;
+  background: rgba(255, 138, 33, 0.8);
+  width: 180px;
+  color: #fff;
+  border-radius: 2px;
+}
+
 /* Creates a small triangle extender for the tooltip */
-.d3-tip:after {
+#home-tooltip:after {
   box-sizing: border-box;
   display: inline;
   font-size: 10px;
@@ -140,4 +150,12 @@ input[type=text]:focus {
   margin: -1px 0 0 0;
   top: 100%;
   left: 0;
+}
+
+.legend-circle {
+  width: 15px;
+  height: 15px;
+  -webkit-border-radius: 7px;
+  -moz-border-radius: 7px;
+  border-radius: 7px;
 }
