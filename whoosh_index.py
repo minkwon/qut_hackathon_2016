@@ -1,4 +1,5 @@
 import os, os.path
+import sys
 import xml.etree.cElementTree as ET
 import dateutil.parser
 from whoosh.index import create_in
@@ -59,6 +60,7 @@ def create_question_index(schema, f):
                 print(lineCount)
                 print_duration("Parsing", start_time)
 
+
     print_duration("Parsing", start_time)
 
     commit_questions_to_index(question_dict, writer)
@@ -68,7 +70,7 @@ def create_question_index(schema, f):
 def parse_question(question_dict, elem):
     id = safe_get("Id", elem)
     question = True if safe_get("PostTypeId", elem) == "1" else False
-    creation_date = safe_get("CreationDate", elem)
+    creation_date = dateutil.parser.parse(safe_get("CreationDate", elem))
     
     # question
     if question:
@@ -90,7 +92,19 @@ def parse_question(question_dict, elem):
             question_dict[parent_id][3].append((id, creation_date))
 
 def commit_questions_to_index(question_dict, writer):
-    # writer.add_document()
+    for row_id, data in question_dict.items():
+        # continue if no answer received
+        if len(data[3]) == 0:
+            continue
+
+        sorted(data[3], key=lambda pair: pair[1])
+
+        if data[2] is not None:
+            # TODO: get timedelta in days or seconds for first question and accepted answer
+        writer.add_document(id=row_id, creation_date=data[0],
+            first_answer_received=first_answer_received,
+            answer_accepted=answer_accepted,
+            tags=data[1])
     # # Overwriting the pre-existing index
     # writer.commit(mergetype=writing.CLEAR)
     pass
@@ -176,7 +190,7 @@ def safe_decode(obj):
 
 def print_duration(name, start_time):
     duration = datetime.datetime.now() - start_time
-    print(name + ": It took " + str(duration.seconds) + "seconds")
+    print(name + ": It took " + str(duration.seconds) + "seconds", flush=True)
 
 postTest = Schema(id=ID(stored=True),
                   post_type=BOOLEAN(stored=True),
