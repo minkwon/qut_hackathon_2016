@@ -76,3 +76,10 @@ Body,
 LastActivityDate,
 Score,
 CommentCount
+
+
+
+
+Posts.xml 51GB
+34,857,920 lines
+to Whoosh posts index

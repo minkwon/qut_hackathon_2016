@@ -6,7 +6,7 @@ def search_field_scored(index, field, value):
     query = QueryParser(field, index.schema).parse(value)
     with index.searcher() as searcher:
         results = searcher.search(query)
-        print results[0]
+        print (results[0])
 
 
 def print_all_docs(index):
@@ -24,8 +24,8 @@ def search_keyword(field, value, index):
         kwargs = {
             field: value
         }
-        l = list(s.documents(**kwargs))
-    return l
+        resultList = list(s.documents(**kwargs))
+    return resultList
 
 ix = get_index("posts_test")
-print search_keyword("tags", u"linux", ix)
+print (search_keyword("tags", u"python", ix))
