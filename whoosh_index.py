@@ -50,30 +50,28 @@ def create_question_index(schema, f):
     for event, elem in context:
         if event == "start":
             root = elem
-        elif event == "end":
+        elif event == "end" and elem.tag == "row":
             parse_question(question_dict, elem)
             # everytime it parses one xml element, element data is freed
             root.clear()
             lineCount += 1
             if lineCount % 100000 == 0:
                 print(lineCount)
-                print_duration("Parsing", start_time)
-
+                print_duration("A", start_time, lineCount)
 
     print_duration("Parsing", start_time)
 
-    commit_questions_to_index(question_dict, writer)
+    commit_questions_to_index(question_dict, writer, start_time)
 
     print_duration("Indexing", start_time)
 
 # Example: { "2" : ( dateObj, "linux bash ubuntu", "31", [("31", dateObj), ("35", dateObj)] ) }
 def parse_question(question_dict, elem):
     id = safe_get("Id", elem)
-    question = True if safe_get("PostTypeId", elem) == "1" else False
     creation_date_UTC = safe_get("CreationDate", elem)
     if creation_date_UTC is None:
         return
-
+    question = True if safe_get("PostTypeId", elem) == "1" else False
     creation_date = dateutil.parser.parse(creation_date_UTC)
     
     # question
@@ -96,30 +94,38 @@ def parse_question(question_dict, elem):
             question_dict[parent_id][3].append((id, creation_date))
 
 # assumes that datetime ordered by row ID
-def commit_questions_to_index(question_dict, writer):
+def commit_questions_to_index(question_dict, writer, start_time):
+    questionCount = 0
     for row_id, data in question_dict.items():
         question_creation_date = data[0]
         tags = data[1]
         accepted_answer_id = data[2]
         answers = data[3]
         # continue if no answer received
-        if len(answers) == 0:
-            continue
-        first_answer_received = (answers[0][1] - question_creation_date).days
         answer_accepted = None
-        if accepted_answer_id is not None:
-            for answer in answers:
-                if answer[0] == accepted_answer_id:
-                    timedelta = answer[1] - question_creation_date
-                    answer_accepted = timedelta.days
+        first_answer_received = None
 
-            # TODO: get timedelta in days or seconds for first question and accepted answer
+        if len(answers) > 0:
+            timedelta = answers[0][1] - question_creation_date
+            first_answer_received = timedelta.days * 86400 + timedelta.seconds
+            if accepted_answer_id is not None:
+                for answer in answers:
+                    if answer[0] == accepted_answer_id:
+                        timedelta = answer[1] - question_creation_date
+                        answer_accepted = timedelta.days * 86400 + timedelta.seconds
+
+        # print("row " + row_id + " creation_date " + str(question_creation_date) 
+        #     + " first_answer " + str(first_answer_received) + " answer_accepted " + str(answer_accepted) + " " + tags)
         writer.add_document(id=row_id, creation_date=question_creation_date,
             first_answer_received=first_answer_received,
             answer_accepted=answer_accepted,
-            tags=data[1])
+            tags=tags)
+        questionCount += 1
+        if questionCount % 100000 == 0:
+            print(questionCount)
+            print_duration("B", start_time, questionCount)
 
-    # # Overwriting the pre-existing index
+    # Overwriting the pre-existing index
     writer.commit(mergetype=writing.CLEAR)
 
 
@@ -194,7 +200,16 @@ def safe_decode(obj):
     # Python 3
     return obj if obj is not None else None
 
-def print_duration(name, start_time):
+def print_duration(name, start_time, count=0):
     duration = datetime.datetime.now() - start_time
-    print(name + ": It took " + str(duration.seconds) + "seconds", flush=True)
 
+    if name == "A":
+        total = 34857920
+        speed = count / duration.seconds
+        remaing_time = (total - count) / speed
+        print(str(duration.seconds) + " seconds, " + str(speed) + "rec/sec, " + str(remaing_time) + " seconds remaining", flush=True)
+    elif name == "B":
+        speed = count / duration.seconds
+        print(str(duration.seconds) + " seconds, " + str(speed) + "Q/sec", flush=True)
+    else:
+        print(name + ": It took " + str(duration.seconds) + " seconds", flush=True)
