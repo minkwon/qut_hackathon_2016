@@ -30,7 +30,6 @@ def create_basic_index(index_name, schema, f):
     # Overwriting the pre-existing index
     writer.commit(mergetype=writing.CLEAR)
     print_duration("Indexing", start_time)
-
 # this will take up a lot of RAM
 def create_question_index(schema, f):
     print("Creating index for Questions")
@@ -67,10 +66,15 @@ def create_question_index(schema, f):
 
     print_duration("Indexing", start_time)
 
+# Example: { "2" : ( dateObj, "linux bash ubuntu", "31", [("31", dateObj), ("35", dateObj)] ) }
 def parse_question(question_dict, elem):
     id = safe_get("Id", elem)
     question = True if safe_get("PostTypeId", elem) == "1" else False
-    creation_date = dateutil.parser.parse(safe_get("CreationDate", elem))
+    creation_date_UTC = safe_get("CreationDate", elem)
+    if creation_date_UTC is None:
+        return
+
+    creation_date = dateutil.parser.parse(creation_date_UTC)
     
     # question
     if question:
@@ -91,23 +95,33 @@ def parse_question(question_dict, elem):
         if parent_id in question_dict:
             question_dict[parent_id][3].append((id, creation_date))
 
+# assumes that datetime ordered by row ID
 def commit_questions_to_index(question_dict, writer):
     for row_id, data in question_dict.items():
+        question_creation_date = data[0]
+        tags = data[1]
+        accepted_answer_id = data[2]
+        answers = data[3]
         # continue if no answer received
-        if len(data[3]) == 0:
+        if len(answers) == 0:
             continue
+        first_answer_received = (answers[0][1] - question_creation_date).days
+        answer_accepted = None
+        if accepted_answer_id is not None:
+            for answer in answers:
+                if answer[0] == accepted_answer_id:
+                    timedelta = answer[1] - question_creation_date
+                    answer_accepted = timedelta.days
 
-        sorted(data[3], key=lambda pair: pair[1])
-
-        if data[2] is not None:
             # TODO: get timedelta in days or seconds for first question and accepted answer
-        writer.add_document(id=row_id, creation_date=data[0],
+        writer.add_document(id=row_id, creation_date=question_creation_date,
             first_answer_received=first_answer_received,
             answer_accepted=answer_accepted,
             tags=data[1])
+
     # # Overwriting the pre-existing index
-    # writer.commit(mergetype=writing.CLEAR)
-    pass
+    writer.commit(mergetype=writing.CLEAR)
+
 
 def write_document_to_index(elem, index_name, writer):
     if elem.tag == "row":
@@ -168,14 +182,6 @@ def write_document_to_index(elem, index_name, writer):
                                 title=title,
                                 body=body)
 
-        # elif index_name == "questions":
-        #     # id = Question id
-        #     # creation_date = get_creation_date
-        #     # first_answer_received = timedelta with earliest answer with parent to this
-        #     # answer_accepted = timedelta with accepted answer''s create time
-        #     # tags = get_tags
-        #     writer.add_document()
-
 
 def safe_get(attr, elem):
     return safe_decode(elem.attrib.get(attr))
@@ -192,41 +198,3 @@ def print_duration(name, start_time):
     duration = datetime.datetime.now() - start_time
     print(name + ": It took " + str(duration.seconds) + "seconds", flush=True)
 
-postTest = Schema(id=ID(stored=True),
-                  post_type=BOOLEAN(stored=True),
-                  parent_id=ID(stored=True),
-                  tags=KEYWORD(stored=True))
-
-postSchema = Schema(id=ID(stored=True, unique=True),
-                    post_type=BOOLEAN(stored=True),  # True if Question False if Answer
-                    parent_id=ID(stored=True),
-                    accepted_answer_id=ID(stored=True),
-                    tags=KEYWORD(stored=True),
-                    owner_id=ID(stored=True),
-                    score=NUMERIC(stored=True),
-                    creation_date=DATETIME(stored=True),
-                    view_count=NUMERIC(stored=True),
-                    comment_count=NUMERIC(stored=True),
-                    answer_count=NUMERIC(stored=True),
-                    favourite_count=NUMERIC(stored=True),
-                    title=TEXT(stored=True),
-                    body=TEXT(stored=True))
-
-questionSchema = Schema(id=ID(stored=True, unique=True),
-                        creation_date=DATETIME(stored=True),
-                        first_answer_received=ID(stored=True),
-                        answer_accepted=ID(stored=True),
-                        tags=KEYWORD(stored=True),
-                        )
-
-# questionSummed
-
-tagSchema = Schema(id=ID(unique=True),
-                   tag_name=ID(stored=True, unique=True),
-                   count=NUMERIC(stored=True))
-
-tagPostSchema = Schema(tag_name=ID(stored=True, unique=True),
-                       count=NUMERIC(stored=True))
-
-# create_basic_index("posts_test", postSchema, "H:/thesis/stackoverflow.com-Posts/posts_peek.xml")
-create_question_index(questionSchema, "H:/thesis/stackoverflow.com-Posts/Posts.xml")

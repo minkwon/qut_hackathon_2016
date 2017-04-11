@@ -21,6 +21,12 @@ Posts.xml
 	Number of users carrying a lot of votes titled as favourite
 
 
+	if No answer accepted, it will be counted as last question given or not averaged?
+	Rounding to days!
+
+	Only show latest! not the entire history. User can drag around though
+
+
 Not going to consider:
 
 	How hot the topic is:
@@ -36,6 +42,7 @@ Not going to consider:
     Average over entire period of time
         User is interested in what's happening now and maybe few months back, for their need in present time.
 
+    There are many things I can come up with, but not really useful.
 
 How about forcing a comparison? Don't show just one, but always make them to compare between two
 
@@ -83,3 +90,4 @@ CommentCount
 Posts.xml 51GB
 34,857,920 lines
 to Whoosh posts index
+2757920

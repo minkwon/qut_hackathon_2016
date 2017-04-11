@@ -20,12 +20,10 @@ def get_index(index_name):
 
 
 def search_keyword(field, value, index):
-    with ix.searcher() as s:
+    with index.searcher() as s:
         kwargs = {
             field: value
         }
         resultList = list(s.documents(**kwargs))
     return resultList
 
-ix = get_index("posts_test")
-print (search_keyword("tags", u"python", ix))
