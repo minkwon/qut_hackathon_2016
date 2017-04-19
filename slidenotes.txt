@@ -27,6 +27,12 @@ Posts.xml
 	Only show latest! not the entire history. User can drag around though
 
 
+##
+Come up with a problem analysis.
+user requirements
+
+
+
 Not going to consider:
 
 	How hot the topic is:
