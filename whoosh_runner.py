@@ -5,6 +5,12 @@ from whoosh.fields import *
 from whoosh import writing
 
 def create_topic_response_timeline_index(schema):
+	tagIndex = get_index("tags")
+	tag_list = []
+	with tagIndex.reader() as reader:
+		for doc in reader.all_stored_fields():
+			tag_list.append(doc.get(tag_name))
+
 	questionIndex = get_index("questions")
 	# topicResponseTimelineIndex = create_in("indexdir", schema=schema, indexname="topics_response_timeline")
 	with questionIndex.reader() as reader:
@@ -36,14 +42,14 @@ postSchema = Schema(id=ID(stored=True, unique=True),
 
 questionSchema = Schema(id=ID(stored=True, unique=True),
                         creation_date=DATETIME(stored=True),
-                        first_answer_received=ID(stored=True),
-                        answer_accepted=ID(stored=True),
-                        tags=KEYWORD(stored=True),
-                        )
+                        first_answer_received=STORED,
+                        answer_accepted=STORED,
+                        tags=KEYWORD(stored=True))
 
 topicResponseTimelineSchema = Schema(tag_name=ID(stored=True, unique=True),
-									answer_accepted_timeline=STORED,
-									first_question_received_timeline=STORED)
+									answer_accepted_time_timeline=STORED,
+									first_question_received_time_timeline=STORED
+									)
 
 
 tagSchema = Schema(id=ID(unique=True),
@@ -51,9 +57,9 @@ tagSchema = Schema(id=ID(unique=True),
                    count=NUMERIC(stored=True))
 
 # create_basic_index("posts_test", postSchema, "H:/thesis/stackoverflow.com-Posts/posts_peek.xml")
-# create_question_index(questionSchema, "H:/thesis/stackoverflow.com-Posts/Posts.xml")
+create_question_index(questionSchema, "H:/thesis/stackoverflow.com-Posts/Posts.xml")
 
-ix = get_index("posts_test")
-with ix.reader() as reader:
-	for doc in reader.all_stored_fields():
-		print(doc.get('accepted_answer_id', 'not accepted'))
+# ix = get_index("posts_test")
+# with ix.reader() as reader:
+# 	for doc in reader.all_stored_fields():
+# 		print(doc.get('accepted_answer_id', 'not accepted'))
