@@ -57,7 +57,7 @@ tagSchema = Schema(id=ID(unique=True),
                    count=NUMERIC(stored=True))
 
 # create_basic_index("posts_test", postSchema, "H:/thesis/stackoverflow.com-Posts/posts_peek.xml")
-create_question_index(questionSchema, "H:/thesis/stackoverflow.com-Posts/Posts.xml")
+create_question_index(questionSchema, "/Volumes/exFat/data/Posts.xml")
 
 # ix = get_index("posts_test")
 # with ix.reader() as reader:

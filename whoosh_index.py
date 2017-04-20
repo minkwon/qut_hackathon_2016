@@ -43,7 +43,7 @@ def create_question_index(schema, f):
     writer = ix.writer()
 
     context = ET.iterparse(f, events=("start", "end"))
-    
+
     lineCount = 0
     question_dict = {}
 
@@ -73,17 +73,17 @@ def parse_question(question_dict, elem):
         return
     question = True if safe_get("PostTypeId", elem) == "1" else False
     creation_date = dateutil.parser.parse(creation_date_UTC)
-    
+
     # question
     if question:
         tags = safe_get("Tags", elem)
         if tags is not None:
             tags = tags[1:-1].replace("><", " ")
-        
+
         accepted_answer_id = safe_get("AcceptedAnswerId", elem)
         answers = []
         question_dict[id] = (creation_date, tags, accepted_answer_id, answers)
-    
+
     # answer
     else:
         parent_id = safe_get("ParentId", elem)
@@ -114,7 +114,7 @@ def commit_questions_to_index(question_dict, writer, start_time):
                         timedelta = answer[1] - question_creation_date
                         answer_accepted = timedelta.days * 86400 + timedelta.seconds
 
-        # print("row " + row_id + " creation_date " + str(question_creation_date) 
+        # print("row " + row_id + " creation_date " + str(question_creation_date)
         #     + " first_answer " + str(first_answer_received) + " answer_accepted " + str(answer_accepted) + " " + tags)
         writer.add_document(id=row_id, creation_date=question_creation_date,
             first_answer_received=first_answer_received,
@@ -196,7 +196,7 @@ def safe_get(attr, elem):
 def safe_decode(obj):
     # Python 2
     # return obj.decode("utf-8") if obj is not None else None
-    
+
     # Python 3
     return obj if obj is not None else None
 
