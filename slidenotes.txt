@@ -97,3 +97,29 @@ Posts.xml 51GB
 34,857,920 lines
 to Whoosh posts index
 2757920
+
+47064 tags
+
+
+# DEMO
+
+Think about what to discuss
+
+How can we achieve decision making based on a Q&A platform? because it's powerful
+
+Convince that by Talking about comparing with Yahoo Answers
+Monitored more strictly,
+They put their real identities
+technical questions for technical people, developer asking to another developer
+More detailed answers with code
+
+
+
+In the response time: say I like this because there are a lot of factors that determines
+response time i.e) popularity, number of questions, difficulty of different problems.
+But it shows the outcome
+
+talk about tags that lies in similar space.
+
+angularjs-directives: very specific tag, very fast response vs Java tag
+

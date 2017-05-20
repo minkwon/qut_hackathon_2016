@@ -169,7 +169,8 @@ $(document).ready(function(){
                 function (json) {
                     var data = JSON.parse(json);
                     refreshChart(data);
-                });
+                }
+            );
             search.val('');
         }
     });

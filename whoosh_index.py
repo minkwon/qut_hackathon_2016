@@ -2,6 +2,7 @@ import os, os.path
 import sys
 import xml.etree.cElementTree as ET
 import dateutil.parser
+import _pickle as pickle
 from whoosh.index import create_in
 from whoosh.fields import *
 from whoosh import writing
@@ -42,22 +43,20 @@ def create_question_index(schema, f):
     # ix = whoosh.index.open_dir("indexdir", indexname="users")
     writer = ix.writer()
 
-    context = ET.iterparse(f, events=("start", "end"))
+    context = ET.iterparse(f)
 
     lineCount = 0
     question_dict = {}
 
     for event, elem in context:
-        if event == "start":
-            root = elem
-        elif event == "end" and elem.tag == "row":
+        lineCount += 1
+        if lineCount > 13529000 and elem.tag == "row":
             parse_question(question_dict, elem)
-            # everytime it parses one xml element, element data is freed
-            root.clear()
-            lineCount += 1
-            if lineCount % 100000 == 0:
-                print(lineCount)
-                print_duration("A", start_time, lineCount)
+
+        elem.clear()
+        if lineCount % 100000 == 0:
+            print(lineCount)
+            print_duration("A", start_time, lineCount)
 
     print_duration("Parsing", start_time)
 
@@ -94,16 +93,22 @@ def parse_question(question_dict, elem):
             question_dict[parent_id][3].append((id, creation_date))
 
 # assumes that datetime ordered by row ID
+# { "2" : ( dateObj, "linux bash ubuntu", "31", [("31", dateObj), ("35", dateObj)] ) }
 def commit_questions_to_index(question_dict, writer, start_time):
+    # { "linux" : { "2013-01" : [questionCount, questionWithAnswer, questionCountWithAccepted, firstAnswerReceivedTimeSum, answerAccepted] } }
+    tag_dict = {}
+
     questionCount = 0
     for row_id, data in question_dict.items():
+        
         question_creation_date = data[0]
+        c_month = str(question_creation_date.year) + "-" + str(question_creation_date.month)
         tags = data[1]
         accepted_answer_id = data[2]
         answers = data[3]
         # continue if no answer received
-        answer_accepted = None
-        first_answer_received = None
+        answer_accepted = 0
+        first_answer_received = 0
 
         if len(answers) > 0:
             timedelta = answers[0][1] - question_creation_date
@@ -114,19 +119,42 @@ def commit_questions_to_index(question_dict, writer, start_time):
                         timedelta = answer[1] - question_creation_date
                         answer_accepted = timedelta.days * 86400 + timedelta.seconds
 
+        if tags is not None:
+            accepted = 1 if answer_accepted != 0 else 0
+            any_answer_received = 1 if first_answer_received != 0 else 0
+
+            for tag in tags.split(" "):
+                if tag not in tag_dict:
+                    tag_dict[tag] = {c_month : [1, any_answer_received, accepted, first_answer_received, answer_accepted]}
+                else:
+                    if c_month not in tag_dict[tag]:
+                        tag_dict[tag][c_month] = [1, any_answer_received, accepted, first_answer_received, answer_accepted]
+                    else:
+                        tag_dict[tag][c_month][0] += 1
+                        tag_dict[tag][c_month][1] += any_answer_received # counts
+                        tag_dict[tag][c_month][2] += accepted # counts
+                        tag_dict[tag][c_month][3] += first_answer_received # sum of time in seconds
+                        tag_dict[tag][c_month][4] += answer_accepted # sum of time in seconds
+
         # print("row " + row_id + " creation_date " + str(question_creation_date)
         #     + " first_answer " + str(first_answer_received) + " answer_accepted " + str(answer_accepted) + " " + tags)
-        writer.add_document(id=row_id, creation_date=question_creation_date,
-            first_answer_received=first_answer_received,
-            answer_accepted=answer_accepted,
-            tags=tags)
+
         questionCount += 1
         if questionCount % 100000 == 0:
             print(questionCount)
             print_duration("B", start_time, questionCount)
 
-    # Overwriting the pre-existing index
-    writer.commit(mergetype=writing.CLEAR)
+    tag_dict_position_table = {}
+    postings_writer = open("static/questions_postings", "wb")
+    for tag_name, val in tag_dict.items():
+        pointer = postings_writer.tell()
+        pickle.dump(val, postings_writer)
+        tag_dict_position_table[tag_name] = pointer
+
+    position_table_writer = open("static/questions_position_table", "wb")
+    pickle.dump(tag_dict_position_table, position_table_writer)
+    postings_writer.close()
+    position_table_writer.close()
 
 
 def write_document_to_index(elem, index_name, writer):
@@ -198,7 +226,7 @@ def safe_decode(obj):
     # return obj.decode("utf-8") if obj is not None else None
 
     # Python 3
-    return obj if obj is not None else None
+    return obj
 
 def print_duration(name, start_time, count=0):
     duration = datetime.datetime.now() - start_time

@@ -1,0 +1,25 @@
+{% extends "index.html" %}
+{% load static %}
+
+{% block style %}
+<link rel="stylesheet" type="text/css" href={% static "css/question-style.css" %}>
+<link rel="stylesheet" type="text/css" href={% static "css/jquery.auto-complete.css" %}>
+{% endblock style %}
+
+{% block content %}
+    <div class="container">
+
+        <h1>How quickly can I expect an answer in StackOverflow?</h1>
+        <div id="search-section">
+            <input type="text" id="former-tag-box" placeholder="Enter a tag name..">
+            <label id="vs-label">VS</label>
+            <input type="text" id="latter-tag-box" placeholder="Enter a tag name..">
+        </div>
+        <div id="horizontal-break"></div>
+
+        <div id="stacked-chart-pane"></div>
+    </div>
+    <script type="text/javascript" src={% static "js/jquery.auto-complete.min.js" %}></script>
+    <script type="text/javascript" src={% static "js/tags-list.js" %}></script>
+    <script type="text/javascript" src={% static "js/questions.js" %}></script>
+{% endblock content %}

@@ -1,0 +1,60 @@
+.container {
+    width: 90vw;
+    margin: auto;
+    /*background-color: #cccccc;*/
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#search-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#vs-label {
+    font-weight: bold;
+    margin: 0px 10px 0px 10px;
+}
+
+#horizontal-break {
+    padding-top: 30px;
+    width: 30px;
+}
+
+#stacked-chart-pane {
+    width: inherit;
+    height: 400px;
+}
+
+.yellow-stroke {
+    stroke: rgb(244, 208, 12);
+    stroke-width: 3px;
+}
+
+.blue-stroke {
+    stroke: rgb(0, 100, 149);
+    stroke-width: 3px;
+}
+
+#areaDown0 {
+    fill: rgb(244, 208, 12);
+}
+
+#areaDown1 {
+    fill: rgb(0, 100, 149);
+}
+
+#questions-tooltip {
+    line-height: 1;
+    padding: 5px 5px 5px 5px;
+    background: rgba(29, 29, 27, 0.8);
+    width: 160px;
+    color: #fff;
+    border-radius: 2px;
+}
+
+::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+  color: whitesmoke;
+}

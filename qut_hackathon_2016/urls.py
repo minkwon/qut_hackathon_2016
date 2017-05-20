@@ -1,6 +1,8 @@
 from django.conf.urls import url
 from django.contrib import admin
+
 import qut_hackathon_2016.views as views
+from qut_hackathon_2016 import settings
 
 """mysite URL Configuration
 
@@ -28,5 +30,9 @@ urlpatterns = [
     url(r'^timeline/$', views.timeline, name='timeline'),
     url(r'^timeline.json$', views.timeline_json),
     url(r'^home.json$', views.home_json),
-    url(r'^$', views.home, name='home')
+    url(r'^responsiveness/$', views.responsiveness),
+    url(r'^questions.json/$', views.question_get),
+    url(r'^reliability/$', views.reliability),
+    url(r'^tags/$', views.get_tags),
+    url(r'^$', views.home, name='home'),
 ]

@@ -1,0 +1,69 @@
+.container {
+    width: 90vw;
+    margin: auto;
+    /*background-color: #cccccc;*/
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#search-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#vs-label {
+    font-weight: bold;
+    margin: 0px 10px 0px 10px;
+}
+
+input[type=text] {
+    border-width: 2px;
+    border-color: darkgrey;
+}
+
+#horizontal-break {
+    padding-top: 30px;
+    width: 30px;
+}
+
+#stacked-chart-pane {
+    width: inherit;
+    height: 400px;
+}
+
+#areaUp0 {
+    fill: rgb(244, 128, 36);
+}
+
+#areaUp0-border {
+    stroke: rgb(244, 128, 36);
+    stroke-width: 2px;
+}
+
+#areaUp1 {
+    fill: rgb(94, 186, 125);
+}
+
+#areaUp1-border {
+    stroke: rgb(94, 186, 125);
+    stroke-width: 2px;
+}
+
+#areaDown0 {
+    fill: rgb(244, 128, 36);
+}
+
+#areaDown1 {
+    fill: rgb(94, 186, 125);
+}
+
+#questions-tooltip {
+    line-height: 1;
+    padding: 5px 5px 5px 5px;
+    background: rgba(29, 29, 27, 0.8);
+    width: 160px;
+    color: #fff;
+    border-radius: 2px;
+}
