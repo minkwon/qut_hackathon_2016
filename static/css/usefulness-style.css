@@ -30,12 +30,12 @@
 
 .yellow-stroke {
     stroke: rgb(244, 208, 12);
-    stroke-width: 3px;
+    stroke-width: 4px;
 }
 
 .blue-stroke {
     stroke: rgb(0, 100, 149);
-    stroke-width: 3px;
+    stroke-width: 4px;
 }
 
 #areaDown0 {
@@ -50,7 +50,7 @@
     line-height: 1;
     padding: 5px 5px 5px 5px;
     background: rgba(29, 29, 27, 0.8);
-    width: 160px;
+    width: 240px;
     color: #fff;
     border-radius: 2px;
 }

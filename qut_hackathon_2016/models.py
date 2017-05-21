@@ -5,7 +5,7 @@ import json
 def load_posting_by_key(key, dictionary, postings_reader):
     if key not in dictionary:
         return None
-
+    print(dictionary[key])
     postings_reader.seek(dictionary[key])
     return pickle.load(postings_reader)
 
@@ -17,21 +17,33 @@ def get_question_data_for_tag(tags):
     table_reader.close()
     postings_reader = open("static/questions_postings", "rb")
 
-    # "java" : { "2013-4" : [Q's, #Q'sWithAnswer, #Q'sWithAcceptedAnswer, timeForFirstAnswer, timeForAcceptedAnswer] }
+    # "former" : {
+    #   "name : "java",
+    #   "series" : [{
+    #       "date" : "2013-4",
+    #       "data" : [Q's, #Q'sWithAnswer, #Q'sWithAcceptedAnswer, timeForFirstAnswer, timeForAcceptedAnswer]
+    #   }, {...}],
+    # "latter" : {
+    #   "name : "c",
+    #   "series" : [{
+    #       "date" : "2013-4",
+    #       "data" : [Q's, #Q'sWithAnswer, #Q'sWithAcceptedAnswer, timeForFirstAnswer, timeForAcceptedAnswer]
+    #   }, {...}]
+    # }
+
     former_data = load_posting_by_key(tags["former"].lower(), pos_table, postings_reader)
-    latter_data = load_posting_by_key(tags["latter"].lower(), pos_table, postings_reader)
-    postings_reader.close()
-
     former = {"name": tags["former"], "series": []}
-    latter = {"name": tags["latter"], "series": []}
-
     for date, data in former_data.items():
         former["series"].append({"date": date, "data": data})
+
+    latter_data = load_posting_by_key(tags["latter"].lower(), pos_table, postings_reader)
+    latter = {"name": tags["latter"], "series": []}
     for date, data in latter_data.items():
         latter["series"].append({"date": date, "data": data})
 
     result["former"] = former
     result["latter"] = latter
+    postings_reader.close()
     return result
 
 

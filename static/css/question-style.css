@@ -39,7 +39,7 @@ input[type=text] {
 
 #areaUp0-border {
     stroke: rgb(244, 128, 36);
-    stroke-width: 2px;
+    stroke-width: 3px;
 }
 
 #areaUp1 {
@@ -48,7 +48,7 @@ input[type=text] {
 
 #areaUp1-border {
     stroke: rgb(94, 186, 125);
-    stroke-width: 2px;
+    stroke-width: 3px;
 }
 
 #areaDown0 {

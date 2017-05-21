@@ -10,7 +10,7 @@ $(document).ajaxStart(function () {
 });
 
 d3.select("#former-tag-box").style("background-color", "#F4D00C");
-d3.select("#latter-tag-box").style("background-color", "#006495").style("width", "400px");
+d3.select("#latter-tag-box").style("background-color", "#006495");
 
 var margin = {top: 40, right: 50, bottom: 30, left: 65},
     width = $("#stacked-chart-pane").width() - margin.left - margin.right,
@@ -55,6 +55,8 @@ var verticalGuide = d3.select('#lines').append('path')
 var chartDrawn = false;
 
 var formerTagLabel, latterTagLabel, y0Label, y1Label;
+
+var oneToOne = false;
 
 function refreshChart(data) {
     dataCache = JSON.parse(JSON.stringify(data));
@@ -101,10 +103,10 @@ function refreshChart(data) {
 
     var area = d3.area().x(function(d) { return xScale(parseTime(d.date)); })
         .y0(height / 2)
-        .y1(function(d) { return y1Scale(getAverageTimeForFirstAnswered(d.data)); });
+        .y1(function(d) { return y1Scale(getAverageTimeForAcceptedAnswer(d.data)); });
 
     var areaOutline = d3.line().x(function(d) { return xScale(parseTime(d.date)); })
-        .y(function(d) { return y1Scale(getAverageTimeForFirstAnswered(d.data)); });
+        .y(function(d) { return y1Scale(getAverageTimeForAcceptedAnswer(d.data)); });
 
 
     var graph = svg.append("g").attr("class", "graph");
@@ -115,7 +117,6 @@ function refreshChart(data) {
         .attr("class", "yellow-stroke")
         .attr("d", lineAnyAnswer)
         .attr("fill-opacity", 0)
-        .attr("stroke-dasharray", "5, 5")
         .attr("clip-path", "url(#clip)");
 
     graph.append("path")
@@ -123,7 +124,6 @@ function refreshChart(data) {
         .attr("class", "blue-stroke")
         .attr("d", lineAnyAnswer)
         .attr("fill-opacity", 0)
-        .attr("stroke-dasharray", "5, 5")
         .attr("clip-path", "url(#clip)");
 
     graph.append("path")
@@ -131,7 +131,8 @@ function refreshChart(data) {
         .attr("class", "yellow-stroke")
         .attr("d", lineAccepted)
         .attr("fill-opacity", 0)
-        .style("stroke-width", "5px")
+        .style("stroke-width", "2px")
+        .attr("stroke-dasharray", "5, 5")
         .attr("clip-path", "url(#clip)");
 
     graph.append("path")
@@ -139,7 +140,8 @@ function refreshChart(data) {
         .attr("class", "blue-stroke")
         .attr("d", lineAccepted)
         .attr("fill-opacity", 0)
-        .style("stroke-width", "5px")
+        .style("stroke-width", "2px")
+        .attr("stroke-dasharray", "5, 5")
         .attr("clip-path", "url(#clip)");
 
     // bottom areas
@@ -212,7 +214,7 @@ function refreshChart(data) {
             var mouseDataIndexFormer = bisectDate(former.series, mouseDate);
             var mouseDataIndexLatter = bisectDate(latter.series, mouseDate);
             // tool tip
-            if (d3.event.pageX < $(window).width() - 180) {
+            if (d3.event.pageX < $(window).width() - 260) {
                 toolTip.style('left', (d3.event.pageX + 10) + 'px')
                 .style('top', (d3.event.pageY + 35) + 'px');
             } else {
@@ -220,25 +222,37 @@ function refreshChart(data) {
                 .style('top', (d3.event.pageY + 35) + 'px');
             }
 
-            toolTip.style('opacity', 0.9)
-                .html("Date: ")
+            toolTip.style('opacity', 0.98)
+                .html("In ")
                 .append("span")
-                .html(formatTime(mouseDate) + "<br><br>");
+                .html(formatTime(mouseDate) + ":<br><br>");
 
-            var correctAnswerSection = toolTip.append("div");
-            var firstAnswerSection = toolTip.append("div");
+            //toolTip.append("div").style("padding", "3px").style("font-weight", "bold")
+            //    .html("% of Questions Answered");
+            var formerToolTip = toolTip.append("div").style("line-height", "150%");
+            var latterToolTip = toolTip.append("div").style("line-height", "150%");
 
-            //correctAnswerSection.style("text-align", "right").style("background", "rgb(94, 186, 125)")
-            //    .style("padding", "2px")
-            //    .style("margin", "2px")
-            //    .attr("opacity", "1")
-            //    .html(former.name + " : " + (getAverageTimeForAcceptedAnswer(former.series[mouseDataIndexFormer].data) / 86400).toFixed(2) + " days<br>"
-            //        + latter.name + " : " + (getAverageTimeForAcceptedAnswer(latter.series[mouseDataIndexLatter].data) / 86400).toFixed(2) + " days");
-            //firstAnswerSection.style("text-align", "right").style("background", "rgb(244, 128, 36)")
-            //    .style("padding", "2px")
-            //    .style("margin", "2px")
-            //    .html(former.name + " : " + (getAverageTimeForFirstAnswered(former.series[mouseDataIndexFormer].data) / 86400).toFixed(2) + " days<br>"
-            //        + latter.name + " : " + (getAverageTimeForFirstAnswered(latter.series[mouseDataIndexLatter].data) / 86400).toFixed(2) + " days");
+            formerToolTip.style("background", "rgb(244, 208, 12)")
+                .style("padding", "4px")
+                .style("margin", "2px")
+                .attr("opacity", 1)
+                .style("color", "black")
+                .html("For <b>" + former.name + "</b>,<br>"
+                        + "Out of <b>" + former.series[mouseDataIndexFormer].data[0] + "</b> questions<br>"
+                        + "<b>" + (getAnyAnswerPercentage(former.series[mouseDataIndexFormer].data)).toFixed(2) + "%</b> were answered,<br>"
+                        + "<b>" + (getAnsweredPercentage(former.series[mouseDataIndexFormer].data)).toFixed(2) + "%</b> were accepted by asker.<br>"
+                        + "In average, it took <b>" + prettyPrint(getAverageTimeForAcceptedAnswer(former.series[mouseDataIndexFormer].data)) + "</b> for an acceptable answer");
+
+            latterToolTip.style("background", "rgb(0, 100, 149)")
+                .style("padding", "4px")
+                .style("margin", "2px")
+                .attr("opacity", 1)
+                .style("color", "black")
+                .html("For <b>" + latter.name + "</b>,<br>"
+                        + "Out of <b>" + latter.series[mouseDataIndexFormer].data[0] + "</b> questions<br>"
+                        + "<b>" + (getAnyAnswerPercentage(latter.series[mouseDataIndexFormer].data)).toFixed(2) + "%</b> were answered,<br>"
+                        + "<b>" + (getAnsweredPercentage(latter.series[mouseDataIndexFormer].data)).toFixed(2) + "%</b> were accepted by asker.<br>"
+                        + "In average, it took <b>" + prettyPrint(getAverageTimeForAcceptedAnswer(latter.series[mouseDataIndexFormer].data)) + "</b> for an acceptable answer");
 
             verticalGuide
                 .style('stroke', 'orange')
@@ -288,17 +302,54 @@ function refreshChart(data) {
             .style("fill", "#006495")
             .attr("opacity", 0.7);
 
-
         latterTagLabel = legend.append("text")
             .attr("x", width / 2 - 125 + 30)
             .attr("y", height + 16)
             .attr("font-size", "16px");
+
+        legend.append("line")
+            .attr("x1", width - 350)
+            .attr("y1", -18)
+            .attr("x2", width - 330)
+            .attr("y2", -18)
+            .attr("style", "stroke:#F4D00C;stroke-width:4px");
+        legend.append("line")
+            .attr("x1", width - 350)
+            .attr("y1", -6)
+            .attr("x2", width - 330)
+            .attr("y2", -6)
+            .attr("style", "stroke:#006495;stroke-width:4px")
+        legend.append("text")
+            .attr("x", width - 320)
+            .attr("y", -5)
+            .attr("font-size", "16px")
+            .html("has an answer");
+
+        legend.append("line")
+            .attr("x1", width - 200)
+            .attr("y1", -18)
+            .attr("x2", width - 170)
+            .attr("y2", -18)
+            .attr("style", "stroke:#F4D00C;stroke-width:2px")
+            .attr("stroke-dasharray", "5, 5");
+        legend.append("line")
+            .attr("x1", width - 200)
+            .attr("y1", -6)
+            .attr("x2", width - 170)
+            .attr("y2", -6)
+            .attr("style", "stroke:#006495;stroke-width:2px")
+            .attr("stroke-dasharray", "5, 5");
+
+        legend.append("text")
+            .attr("x", width - 165)
+            .attr("y", -5)
+            .attr("font-size", "16px")
+            .html("has an accepted answer");
     }
-    y0Label.html("% of questions with answers");
-    y1Label.html("Average time it takes to get the first answer");
+    y0Label.html("% of questions that are answered");
+    y1Label.html("Average time it takes to get an acceptable answer");
     formerTagLabel.html(former.name);
     latterTagLabel.html(latter.name);
-    console.log("former: " + former.name);
 }
 
 function inputEmpty() {
@@ -438,4 +489,11 @@ function updateMaxValue(former, latter, zoomedDomainDate) {
         }
     });
     return maxValue;
+}
+
+function prettyPrint(seconds) {
+    if (seconds / 86400 < 1) {
+        return (seconds / 3600).toFixed(2) + " hours";
+    }
+    return (seconds / 86400).toFixed(2) + " days";
 }

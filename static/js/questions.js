@@ -154,7 +154,7 @@ function refreshChart(data) {
         .data([latter.series])
         .attr("class", "area")
         .attr("id", "areaDown0")
-        .attr("opacity", 0.95)
+        .attr("opacity", 0.7)
         .attr("d", areaDownFirstAnswer)
         .attr("clip-path", "url(#clip)");
 
@@ -162,7 +162,7 @@ function refreshChart(data) {
         .data([latter.series])
         .attr("class", "area")
         .attr("id", "areaDown1")
-        .attr("opacity", 0.3)
+        .attr("opacity", 0.7)
         .attr("d", areaDownAccepted)
         .attr("clip-path", "url(#clip)");
 
@@ -246,8 +246,11 @@ function refreshChart(data) {
                 .html("Date: ")
                 .append("span")
                 .html(formatTime(mouseDate) + "<br><br>");
+            toolTip.append("div").html("Acceptable Answer");
 
             var correctAnswerSection = toolTip.append("div");
+
+            toolTip.append("div").html("First Answer");
             var firstAnswerSection = toolTip.append("div");
 
             correctAnswerSection.style("text-align", "right").style("background", "rgb(94, 186, 125)")

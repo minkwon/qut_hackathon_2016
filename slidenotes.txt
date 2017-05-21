@@ -95,23 +95,28 @@ CommentCount
 
 Posts.xml 51GB
 34,857,920 lines
-to Whoosh posts index
-2757920
 
 47064 tags
 
 
 # DEMO
 
-Think about what to discuss
+I built a visual tool that helps programmers like myself make better decisions with useful information that
+one cannot find through search engines such as google.
 
-How can we achieve decision making based on a Q&A platform? because it's powerful
+Talk about structure
 
-Convince that by Talking about comparing with Yahoo Answers
-Monitored more strictly,
-They put their real identities
-technical questions for technical people, developer asking to another developer
-More detailed answers with code
+Give background
+
+    How can we achieve decision making based on a Q&A platform? because it's powerful
+
+    Convince that by Talking about comparing with Yahoo Answers
+    Monitored more strictly,
+    They put their real identities
+    technical questions for technical people, developer asking to another developer
+    More detailed answers with code
+
+Talk about prior work
 
 
 
