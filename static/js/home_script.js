@@ -21,21 +21,50 @@ var svg = d3.select("#chart").append("svg")
           "translate(" + margin.left + "," + margin.top + ")");
 
 var infoBox = svg.append("g")
+    .style("opacity", 0)
     .attr("id", "infoBox");
 
 var title = infoBox.append("text")
     .attr("x", 0)
     .attr("y", 50)
-    .style("opacity", 0)
-    .attr("font-size", 50)
-    .html("Tags in stackoverflow");
+    .attr("font-size", 40)
+    .html("How large is StackOverflow Data?");
 
-var subTitle = infoBox.append("text")
+infoBox.append("text")
     .attr("x", 0)
-    .attr("y", 85)
-    .style("opacity", 0)
+    .attr("y", 150)
+    .attr("font-size", 28)
+    .html("13 Million Questions and 22 Million Answers");
+
+infoBox.append("text")
+    .attr("x", 0)
+    .attr("y", 220)
+    .attr("font-size", 28)
+    .html("7 Million Active User Accounts");
+
+infoBox.append("text")
+    .attr("x", 0)
+    .attr("y", 290)
+    .attr("font-size", 28)
+    .html("47,064 Tags available for use");
+
+infoBox.append("text")
+    .attr("x", 0)
+    .attr("y", 360)
+    .attr("font-size", 28)
+    .html("25 Billion Total Views");
+
+infoBox.append("text")
+    .attr("x", 0)
+    .attr("y", 430)
+    .attr("font-size", 28)
+    .html("8 Years of Accumulated Database");
+
+infoBox.append("text")
+    .attr("x", 0)
+    .attr("y", 680)
     .attr("font-size", 20)
-    .html("Showing " + currentTotalTagCount + " of them which are used at least 1000 times");
+    .html("*Figures were queried at StackExchange Data Explorer on 22/05/2017");
 
 var tooltip = d3.tip().attr("class", "d3-tip")
     .attr("id", "home-tooltip")
@@ -110,12 +139,9 @@ function stopSimulation() {
 }
 
 function showText() {
-    title.transition()
+    infoBox.transition()
         .style("opacity", 1)
         .duration(400);
-    subTitle.transition()
-        .style("opacity", 1)
-        .duration(600);
 }
 
 // Ajax call for total count nodes

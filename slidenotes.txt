@@ -106,6 +106,8 @@ one cannot find through search engines such as google.
 
 Talk about structure
 
+talk about Goal. How, I want to know how active the community is.
+
 Give background
 
     How can we achieve decision making based on a Q&A platform? because it's powerful
@@ -116,7 +118,7 @@ Give background
     technical questions for technical people, developer asking to another developer
     More detailed answers with code
 
-Talk about prior work
+Talk about prior work very quickly
 
 
 
